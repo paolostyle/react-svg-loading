@@ -2,12 +2,13 @@
 
 > Dependency-free loading React components based on loading.io library
 
-[![NPM](https://img.shields.io/npm/v/react-svg-loading.svg)](https://www.npmjs.com/package/react-svg-loading) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-svg-loading.svg)](https://www.npmjs.com/package/react-svg-loading)
 
 ## Install
 
 ```bash
 npm install --save react-svg-loading
+yarn add react-svg-loading
 ```
 
 ## Usage
