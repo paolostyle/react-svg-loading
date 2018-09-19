@@ -5,7 +5,8 @@
   "rules": {
     "interface-name": false,
     "object-literal-sort-keys": false,
-    "member-access": [true, "no-public"]
+    "member-access": [true, "no-public"],
+    "no-namespace": [true, "allow-declarations"]
   },
   "rulesDirectory": []
 }

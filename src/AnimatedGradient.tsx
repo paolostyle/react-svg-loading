@@ -51,5 +51,5 @@ export const AnimatedGradient: React.SFC<AnimatedGradientProps> = props => {
 AnimatedGradient.defaultProps = {
   direction: 45,
   duration: 1,
-  colors: []
+  colors: ['#9df', '#9fd', '#df9', '#fd9']
 };

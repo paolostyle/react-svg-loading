@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FillLoadingProps, FillLoadingState } from './types/FillLoading';
+import { Direction, GeoAttributes, RootStyle } from './types/FillLoading';
 import { randString } from './utils';
 
 const directions = {
@@ -8,6 +8,21 @@ const directions = {
   ttb: { x: 0, y: -1, trX: 0, trY: 1 },
   btt: { x: 0, y: 1, trX: 0, trY: -1 }
 };
+
+export interface FillLoadingProps {
+  image: string;
+  duration: number;
+  direction: 'ltr' | 'rtl' | 'ttb' | 'btt';
+}
+
+export interface FillLoadingState {
+  width: number;
+  height: number;
+  viewBox: string;
+  rectAttrs: GeoAttributes;
+  rootStyle: RootStyle;
+  multipliers: Direction;
+}
 
 export class FillLoading extends React.Component<FillLoadingProps, FillLoadingState> {
   state: FillLoadingState = {

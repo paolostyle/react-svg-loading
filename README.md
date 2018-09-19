@@ -4,6 +4,9 @@
 
 [![NPM](https://img.shields.io/npm/v/react-svg-loading.svg)](https://www.npmjs.com/package/react-svg-loading)
 
+## About
+WIP - not usable yet.
+
 ## Install
 
 ```bash

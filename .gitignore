@@ -22,3 +22,5 @@ yarn-error.log*
 
 # rollup
 .rpt2_cache
+
+src/loadingio.js
