@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { range } from './utils';
+import { range } from '../utils';
 
 interface AnimatedStripeProps {
   color1: string;

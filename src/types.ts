@@ -13,6 +13,6 @@ export interface Direction {
 }
 
 export interface RootStyle {
-  width: string;
-  height: string;
+  width?: string;
+  height?: string;
 }

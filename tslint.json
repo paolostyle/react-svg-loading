@@ -3,10 +3,12 @@
   "extends": ["tslint:latest", "tslint-react", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
+    "prettier": true,
     "interface-name": false,
     "object-literal-sort-keys": false,
     "member-access": [true, "no-public"],
-    "no-namespace": [true, "allow-declarations"]
+    "no-namespace": [true, "allow-declarations"],
+    "no-submodule-imports": false
   },
-  "rulesDirectory": []
+  "rulesDirectory": ["tslint-plugin-prettier"]
 }
