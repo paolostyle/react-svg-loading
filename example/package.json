@@ -4,6 +4,13 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "analyze": "source-map-explorer build/static/js/main.*",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
@@ -11,10 +18,7 @@
     "react-scripts": "^1.1.4",
     "react-svg-loading": "link:.."
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "source-map-explorer": "^1.6.0"
   }
 }

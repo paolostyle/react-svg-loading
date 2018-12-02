@@ -1,6 +1,3 @@
-import { AnimatedBubble } from './effects/AnimatedBubble';
-import { AnimatedGradient } from './effects/AnimatedGradient';
-import { AnimatedStripe } from './effects/AnimatedStripe';
-import { ImageLoading } from './ImageLoading';
+import { FillImageLoading } from './FillImageLoading';
 
-export { AnimatedGradient, AnimatedStripe, AnimatedBubble, ImageLoading };
+export { FillImageLoading };

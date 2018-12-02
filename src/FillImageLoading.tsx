@@ -2,58 +2,58 @@ import * as React from 'react';
 import { Direction, GeoAttributes, RootStyle } from './types';
 import { randString } from './utils';
 
-const directions = {
+type DirectionId = 'ltr' | 'rtl' | 'ttb' | 'btt';
+type Directions = { [key in DirectionId]: Direction };
+
+const directions: Directions = {
   ltr: { x: -1, y: 0, trX: 1, trY: 0 },
   rtl: { x: 1, y: 0, trX: -1, trY: 0 },
   ttb: { x: 0, y: -1, trX: 0, trY: 1 },
   btt: { x: 0, y: 1, trX: 0, trY: -1 }
 };
 
-export interface ImageLoadingProps {
-  type: 'fill' | 'stroke';
+export interface FillImageProps {
   image: string;
-  path: string;
-  fillDirection: 'ltr' | 'rtl' | 'ttb' | 'btt';
-  fill: string;
   fillBackground: string;
   fillBackgroundExtrude: number;
-  patternSize: number;
-  strokeDir: string;
-  stroke: string;
-  strokeWidth: number;
-  strokeTrail: string;
-  strokeTrailWidth: number;
-  imageSize: number[];
+  fillDirection: DirectionId;
+  imageSize: {
+    width: number;
+    height: number;
+  };
   bbox: GeoAttributes;
-  setDim: boolean; // ?
+  setDim: boolean;
   rootProps: any;
+  value: number;
+  minValue: number;
+  maxValue: number;
+  duration: number;
+  timingFunction: string;
 }
 
-export interface ImageLoadingState {
+export interface FillImageState {
   width: number;
   height: number;
   viewBox: string;
   rectAttrs: GeoAttributes;
   rootStyle: RootStyle;
   multipliers: Direction;
-  pathLength: number;
 }
 
-export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadingState> {
-  static defaultProps: Partial<ImageLoadingProps> = {
+export class FillImageLoading extends React.Component<FillImageProps, FillImageState> {
+  static defaultProps: Partial<FillImageProps> = {
     fillDirection: 'btt',
-    fill: '#25b',
     fillBackground: '#ddd',
-    fillBackgroundExtrude: 3,
-    strokeDir: 'normal',
-    stroke: '#25b',
-    strokeWidth: 3,
-    strokeTrail: '#ddd',
-    strokeTrailWidth: 0.5,
-    setDim: true
+    fillBackgroundExtrude: 2,
+    setDim: true,
+    value: 0,
+    minValue: 0,
+    maxValue: 100,
+    duration: 0.5,
+    timingFunction: 'ease'
   };
 
-  state: ImageLoadingState = {
+  state: FillImageState = {
     width: 100,
     height: 100,
     viewBox: '0 0 100 100',
@@ -63,7 +63,6 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
       width: 100,
       height: 100
     },
-    pathLength: 0,
     rootStyle: {},
     multipliers: directions[this.props.fillDirection]
   };
@@ -74,18 +73,17 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
   private ids = {
     filter: this.idPrefix + '-filter',
     mask: this.idPrefix + '-mask',
-    maskPath: this.idPrefix + '-mask-path',
-    clip: this.idPrefix + '-clip',
-    pattern: this.idPrefix + '-pattern'
+    clip: this.idPrefix + '-clip'
   };
 
-  constructor(props: ImageLoadingProps) {
+  constructor(props: FillImageProps) {
     super(props);
+
     this.image.addEventListener('load', this.setAttributes);
     this.image.src = this.props.image;
   }
 
-  componentDidUpdate(prevProps: ImageLoadingProps) {
+  componentDidUpdate(prevProps: FillImageProps) {
     if (prevProps.image !== this.props.image) {
       this.image.src = this.props.image;
     }
@@ -97,7 +95,25 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
 
   render() {
     const { height, width, multipliers, viewBox, rootStyle, rectAttrs } = this.state;
-    const { type, fillBackgroundExtrude, fillBackground, path, image, rootProps } = this.props;
+    const {
+      fillBackgroundExtrude,
+      fillBackground,
+      image,
+      rootProps,
+      value,
+      minValue,
+      maxValue,
+      duration,
+      timingFunction
+    } = this.props;
+
+    const valuePercent = this.getPercentValue(value, minValue, maxValue);
+    const clipDestX = multipliers.trX * width * valuePercent;
+    const clipDestY = multipliers.trY * height * valuePercent;
+    const clipDestination = `${clipDestX},${clipDestY}`;
+
+    const transition = `transform ${duration}s ${timingFunction}`;
+
     return (
       <div {...rootProps} style={rootStyle}>
         <svg preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox={viewBox}>
@@ -125,77 +141,26 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
                 preserveAspectRatio="xMidYMid"
               />
             </mask>
-            <mask id={this.ids.maskPath}>
-              <path
-                d={this.props.path}
-                fill="#fff"
-                stroke="#fff"
-                filter={`url(#${this.ids.filter})`}
-              />
-            </mask>
             <clipPath id={this.ids.clip}>
               <rect
-                className="mask"
                 fill="#000"
                 x={multipliers.x * width}
                 y={multipliers.y * height}
                 width={width}
                 height={height}
-              >
-                <animateTransform
-                  attributeName="transform"
-                  type="translate"
-                  from={`0,0`}
-                  to={`${multipliers.trX * width},${multipliers.trY * height}`}
-                  dur={`2s`}
-                  repeatCount="1"
-                  fill="freeze"
-                />
-              </rect>
-            </clipPath>
-            <pattern
-              id={this.ids.pattern}
-              patternUnits="userSpaceOnUse"
-              x={0}
-              y={0}
-              width={300}
-              height={300}
-            >
-              <image x={0} y={0} width={300} height={300} />
-            </pattern>
-          </defs>
-          <g className="with-path">
-            {type === 'stroke' ? (
-              <path d={path} fill="none" className="baseline" />
-            ) : (
-              <rect
-                x={rectAttrs.x}
-                y={rectAttrs.y}
-                width={rectAttrs.width}
-                height={rectAttrs.height}
-                mask={`url(#${this.ids.maskPath})`}
-                fill={fillBackground}
-                className="frame"
+                transform={`translate(${clipDestination})`}
+                style={{ transition }}
               />
-            )}
-            <path
-              d={path}
-              ref={(ref: SVGPathElement) => ref.getTotalLength()}
-              className={type === 'stroke' ? 'mainline' : 'solid'}
-              clipPath={type === 'fill' ? `url(#${this.ids.clip})` : ''}
-              fill={type === 'stroke' ? 'none' : undefined}
-              // strokeDasharray={pathLength}
-              // strokeDashoffset={pathLength}
-            />
-          </g>
-          <g className="with-image">
+            </clipPath>
+          </defs>
+          <g>
             <rect
               x={rectAttrs.x}
               y={rectAttrs.y}
               width={rectAttrs.width}
               height={rectAttrs.height}
               mask={`url(#${this.ids.mask})`}
-              fill="#ddd"
+              fill={fillBackground}
             />
             <image
               x={0}
@@ -206,7 +171,6 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
               preserveAspectRatio="xMidYMid"
               clipPath={`url(#${this.ids.clip})`}
               xlinkHref={image}
-              className="solid"
             />
           </g>
         </svg>
@@ -214,24 +178,30 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
     );
   }
 
+  private getPercentValue = (value: number, min: number, max: number) => {
+    const normalizedValue = Math.min(Math.max(value, min), max);
+    return (normalizedValue - min) / (max - min);
+  };
+
   private setAttributes = () => {
     let height = 100;
     let width = 100;
 
     if (this.props.imageSize) {
-      width = this.props.imageSize[0];
-      height = this.props.imageSize[1];
+      width = this.props.imageSize.width;
+      height = this.props.imageSize.height;
     } else if (this.image.width && this.image.height) {
       width = this.image.width;
       height = this.image.height;
     }
+
     this.setState({ width, height }, this.fitImage);
   };
 
   private fitImage = () => {
-    const { strokeWidth, strokeTrailWidth, fillBackgroundExtrude } = this.props;
-    const d = Math.max(strokeWidth, strokeTrailWidth, fillBackgroundExtrude) * 1.5;
-    const box = this.props.bbox || (this.imageRef.current && this.imageRef.current.getBBox());
+    const { fillBackgroundExtrude, bbox, setDim } = this.props;
+    const d = fillBackgroundExtrude * 1.5;
+    const box = bbox || (this.imageRef.current && this.imageRef.current.getBBox());
 
     if (!box || box.width === 0 || box.height === 0) {
       box.x = 0;
@@ -249,9 +219,7 @@ export class ImageLoading extends React.Component<ImageLoadingProps, ImageLoadin
 
     const { x, y, width: rectWidth, height: rectHeight } = rectAttrs;
     const viewBox = [x, y, rectWidth, rectHeight].join(' ');
-    const rootStyle = this.props.setDim
-      ? { width: rectWidth + 'px', height: rectHeight + 'px' }
-      : {};
+    const rootStyle = setDim ? { width: rectWidth + 'px', height: rectHeight + 'px' } : {};
 
     this.setState({ viewBox, rectAttrs, rootStyle });
   };
