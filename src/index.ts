@@ -1,3 +1,4 @@
 import { FillImageLoading } from './FillImageLoading';
+import { TextFill } from './presets/TextFill';
 
-export { FillImageLoading };
+export { TextFill, FillImageLoading };

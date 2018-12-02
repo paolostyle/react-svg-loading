@@ -7,7 +7,7 @@ interface AnimatedStripeProps {
   duration: number;
 }
 
-export const AnimatedStripe: React.SFC<AnimatedStripeProps> = props => {
+export const AnimatedStripe: React.FunctionComponent<AnimatedStripeProps> = props => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
       <rect fill={props.color2} width="100" height="100" />

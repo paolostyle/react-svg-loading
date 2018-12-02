@@ -2,14 +2,18 @@ import * as React from 'react';
 import { range } from '../utils';
 
 interface AnimatedGradientProps {
-  direction: number;
-  duration: number;
-  colors: string[];
+  direction?: number;
+  duration?: number;
+  colors?: string[];
 }
 
-export const AnimatedGradient: React.SFC<AnimatedGradientProps> = props => {
-  const length = props.colors.length * 4 + 1;
-  const directionRad = (props.direction * Math.PI) / 180;
+export const AnimatedGradient: React.FunctionComponent<AnimatedGradientProps> = ({
+  direction = 45,
+  duration = 1,
+  colors = ['#9df', '#9fd', '#df9', '#fd9']
+}) => {
+  const length = colors.length * 4 + 1;
+  const directionRad = (direction * Math.PI) / 180;
   let gx = Math.pow(Math.cos(directionRad), 2);
   let gy = Math.sqrt(gx - Math.pow(gx, 2));
 
@@ -29,7 +33,7 @@ export const AnimatedGradient: React.SFC<AnimatedGradientProps> = props => {
             <stop
               key={i}
               offset={(i * 100) / (length - 1) + '%'}
-              stopColor={props.colors[i % props.colors.length]}
+              stopColor={colors[i % colors.length]}
             />
           ))}
         </linearGradient>
@@ -40,16 +44,10 @@ export const AnimatedGradient: React.SFC<AnimatedGradientProps> = props => {
           type="translate"
           from={`${x},${y}`}
           to={`0,0`}
-          dur={`${props.duration}s`}
+          dur={`${duration}s`}
           repeatCount="indefinite"
         />
       </rect>
     </svg>
   );
-};
-
-AnimatedGradient.defaultProps = {
-  direction: 45,
-  duration: 1,
-  colors: ['#9df', '#9fd', '#df9', '#fd9']
 };

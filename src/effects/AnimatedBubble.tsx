@@ -2,16 +2,22 @@ import * as React from 'react';
 import { range } from '../utils';
 
 interface AnimatedBubbleProps {
-  bgColor: string;
-  bubbleColor: string;
-  count: number;
-  duration: number;
-  size: number;
-  strokeWidth: number;
+  bgColor?: string;
+  bubbleColor?: string;
+  count?: number;
+  duration?: number;
+  size?: number;
+  strokeWidth?: number;
 }
 
-export const AnimatedBubble: React.SFC<AnimatedBubbleProps> = props => {
-  const { bgColor, bubbleColor, count, duration, size, strokeWidth } = props;
+export const AnimatedBubble: React.FunctionComponent<AnimatedBubbleProps> = ({
+  bgColor = '#39d',
+  bubbleColor = '#9cf',
+  count = 15,
+  duration = 1,
+  size = 6,
+  strokeWidth = 1
+}) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
       <rect fill={bgColor} width="200" height="200" />
@@ -45,13 +51,4 @@ export const AnimatedBubble: React.SFC<AnimatedBubbleProps> = props => {
       })}
     </svg>
   );
-};
-
-AnimatedBubble.defaultProps = {
-  bgColor: '#39d',
-  bubbleColor: '#9cf',
-  count: 15,
-  duration: 1,
-  size: 6,
-  strokeWidth: 1
 };

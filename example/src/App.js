@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FillImageLoading } from 'react-svg-loading';
+import { FillImageLoading, TextFill } from 'react-svg-loading';
 import icon from './react-icon.svg';
 
 export default class App extends Component {
@@ -21,11 +21,38 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <FillImageLoading image={icon} value={this.state.value} imageSize={{ width: 300, height: 200}} duration={0.75} timingFunction="ease-out" fillBackgroundExtrude={1} />
-        <div>{this.state.value}</div>
-        <input onChange={e => this.setState({inputVal: e.target.value})} value={this.state.inputVal} />
-        <button onClick={() => this.setState({ value: this.state.inputVal })}>set</button>
-        <input type="checkbox" onChange={e => e.target.checked ? this.randomValues() : this.cancelRandom()} /> Randomize
+        <div>
+          <FillImageLoading
+            image={icon}
+            value={this.state.value}
+            imageSize={{ width: 300, height: 200 }}
+            duration={0.75}
+            timingFunction="ease-out"
+            fillBackgroundExtrude={1}
+          />
+          <div>{this.state.value}</div>
+          <input
+            onChange={e => this.setState({ inputVal: e.target.value })}
+            value={this.state.inputVal}
+          />
+          <button onClick={() => this.setState({ value: this.state.inputVal })}>set</button>
+          <input
+            type="checkbox"
+            onChange={e => (e.target.checked ? this.randomValues() : this.cancelRandom())}
+          />{' '}
+          Randomize
+        </div>
+        <div>
+          <TextFill
+            width={160}
+            height={48}
+            fontFamily="Segoe UI"
+            text="MY TEXT"
+            textFill="#f0381d"
+            fontSize={40}
+            value={this.state.value}
+          />
+        </div>
       </div>
     );
   }

@@ -17,18 +17,18 @@ export interface FillImageProps {
   fillBackground: string;
   fillBackgroundExtrude: number;
   fillDirection: DirectionId;
-  imageSize: {
-    width: number;
-    height: number;
-  };
-  bbox: GeoAttributes;
   setDim: boolean;
-  rootProps: any;
   value: number;
   minValue: number;
   maxValue: number;
   duration: number;
   timingFunction: string;
+  imageSize?: {
+    width: number;
+    height: number;
+  };
+  bbox?: GeoAttributes;
+  rootProps?: any;
 }
 
 export interface FillImageState {
@@ -187,7 +187,7 @@ export class FillImageLoading extends React.Component<FillImageProps, FillImageS
     let height = 100;
     let width = 100;
 
-    if (this.props.imageSize) {
+    if (this.props.imageSize && this.props.imageSize.height && this.props.imageSize.width) {
       width = this.props.imageSize.width;
       height = this.props.imageSize.height;
     } else if (this.image.width && this.image.height) {
@@ -201,13 +201,20 @@ export class FillImageLoading extends React.Component<FillImageProps, FillImageS
   private fitImage = () => {
     const { fillBackgroundExtrude, bbox, setDim } = this.props;
     const d = fillBackgroundExtrude * 1.5;
-    const box = bbox || (this.imageRef.current && this.imageRef.current.getBBox());
+    let box: GeoAttributes = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    };
 
-    if (!box || box.width === 0 || box.height === 0) {
-      box.x = 0;
-      box.y = 0;
-      box.width = 0;
-      box.height = 0;
+    if (bbox) {
+      box = bbox;
+    } else if (this.imageRef.current) {
+      const imageBBox = this.imageRef.current.getBBox();
+      if (imageBBox.width !== 0 && imageBBox.height !== 0) {
+        box = imageBBox;
+      }
     }
 
     const rectAttrs = {
