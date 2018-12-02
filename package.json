@@ -1,6 +1,6 @@
 {
   "name": "react-svg-loading",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Dependency-free loading React components based on loading.io library",
   "author": "paolostyle",
   "license": "MIT",

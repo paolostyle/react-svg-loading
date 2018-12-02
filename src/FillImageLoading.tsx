@@ -22,7 +22,10 @@ export interface FillImageProps {
   minValue: number;
   maxValue: number;
   duration: number;
+  delay: number;
   timingFunction: string;
+  onTransitionEnd?: () => void;
+  className?: string;
   imageSize?: {
     width: number;
     height: number;
@@ -50,7 +53,8 @@ export class FillImageLoading extends React.Component<FillImageProps, FillImageS
     minValue: 0,
     maxValue: 100,
     duration: 0.5,
-    timingFunction: 'ease'
+    delay: 0,
+    timingFunction: 'linear'
   };
 
   state: FillImageState = {
@@ -99,12 +103,15 @@ export class FillImageLoading extends React.Component<FillImageProps, FillImageS
       fillBackgroundExtrude,
       fillBackground,
       image,
-      rootProps,
       value,
       minValue,
       maxValue,
       duration,
-      timingFunction
+      delay,
+      onTransitionEnd,
+      timingFunction,
+      className,
+      rootProps
     } = this.props;
 
     const valuePercent = this.getPercentValue(value, minValue, maxValue);
@@ -112,10 +119,10 @@ export class FillImageLoading extends React.Component<FillImageProps, FillImageS
     const clipDestY = multipliers.trY * height * valuePercent;
     const clipDestination = `${clipDestX},${clipDestY}`;
 
-    const transition = `transform ${duration}s ${timingFunction}`;
+    const transition = `transform ${duration}s ${timingFunction} ${delay}s`;
 
     return (
-      <div {...rootProps} style={rootStyle}>
+      <div {...rootProps} className={className} style={rootStyle}>
         <svg preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox={viewBox}>
           <defs>
             <filter x={-1} y={-1} width={3} height={3} id={this.ids.filter}>
@@ -150,6 +157,7 @@ export class FillImageLoading extends React.Component<FillImageProps, FillImageS
                 height={height}
                 transform={`translate(${clipDestination})`}
                 style={{ transition }}
+                onTransitionEnd={onTransitionEnd}
               />
             </clipPath>
           </defs>
